@@ -1,173 +1,129 @@
-"use client";
+"use client"
 
-import { motion } from 'framer-motion';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Pagination, Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/effect-coverflow';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
+import Link from "next/link"
+import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
+import ProjectPreview from "./components/ProjectPreview"
+import BlogPostPreview from "./components/BlogPostPreview"
+
+const Carousel = dynamic(() => import("./components/Carousel"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+})
+
+const projects = [
+  {
+    title: "E-commerce Platform",
+    description: "A full-stack e-commerce solution with React and Node.js",
+    image: "/projects/ecommerce.jpg",
+    link: "/projects/ecommerce",
+  },
+  {
+    title: "Task Management App",
+    description: "A React-based task management application with drag-and-drop functionality",
+    image: "/projects/task-management.jpg",
+    link: "/projects/task-management",
+  },
+  {
+    title: "Portfolio Website",
+    description: "A responsive portfolio website built with Next.js and Tailwind CSS",
+    image: "/projects/portfolio.jpg",
+    link: "/projects/portfolio",
+  },
+]
+
+const blogPosts = [
+  {
+    title: "Introduction to React Hooks",
+    excerpt: "Learn how to use React Hooks to manage state and side effects in your components.",
+    link: "/blog/intro-to-react-hooks",
+  },
+  {
+    title: "Building Scalable Node.js Applications",
+    excerpt: "Discover best practices for building scalable and maintainable Node.js applications.",
+    link: "/blog/scalable-nodejs-apps",
+  },
+  {
+    title: "Mastering CSS Grid Layout",
+    excerpt: "Explore advanced techniques for creating complex layouts with CSS Grid.",
+    link: "/blog/mastering-css-grid",
+  },
+]
 
 export default function Home() {
-  const projects = [
-    {
-      title: 'Project 1',
-      description: 'A modern web application built with Next.js and Tailwind CSS',
-      image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97',
-      link: '/projects/1',
-    },
-    {
-      title: 'Project 2',
-      description: 'E-commerce platform with advanced features',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f',
-      link: '/projects/2',
-    },
-    {
-      title: 'Project 3',
-      description: 'Mobile-first social media dashboard',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71',
-      link: '/projects/3',
-    },
-  ];
+  const roles = ["Full Stack Developer", "Data Scientist", "Project Manager", "UI/UX Enthusiast"]
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0)
 
-  const blogPosts = [
-    {
-      title: 'Getting Started with Next.js',
-      excerpt: 'Learn how to build modern web applications with Next.js',
-      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
-      link: '/blog/getting-started-nextjs',
-    },
-    {
-      title: 'Mastering Tailwind CSS',
-      excerpt: 'Tips and tricks for using Tailwind CSS effectively',
-      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c',
-      link: '/blog/mastering-tailwind',
-    },
-    {
-      title: 'The Future of Web Development',
-      excerpt: 'Exploring upcoming trends in web development',
-      image: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd',
-      link: '/blog/future-web-development',
-    },
-  ];
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentRoleIndex((prevIndex) => (prevIndex + 1) % roles.length)
+    }, 3000) // Ganti setiap 3 detik
+
+    return () => clearInterval(intervalId)
+  }, [])
 
   return (
-    <div className="min-h-screen pt-16">
-      {/* Hero Section */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center z-10 px-4"
+    <div className="flex flex-col items-center space-y-16">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <Image
+          src="/profile-picture.jpg"
+          alt="Profile Picture"
+          width={200}
+          height={200}
+          className="rounded-full mx-auto mb-8"
+        />
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+          Muhammad Krisnanda
+        </h1>
+        <div className="h-8 mb-8">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={currentRoleIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300"
+            >
+              {roles[currentRoleIndex]}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+        <Link
+          href="/projects"
+          className="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 ease-in-out transform hover:scale-105"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Hi, I'm <span className="text-primary">Your Name</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-foreground/80 mb-8">
-            Full Stack Developer & UI/UX Designer
-          </p>
-          <Button asChild size="lg">
-            <Link href="/contact">
-              Let's work together <ArrowRight className="ml-2" />
-            </Link>
-          </Button>
-        </motion.div>
-      </section>
+          View All Projects
+        </Link>
+      </motion.div>
 
-      {/* Featured Projects */}
-      <section className="py-20 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Featured Projects</h2>
-          <Swiper
-            effect="coverflow"
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView="auto"
-            coverflowEffect={{
-              rotate: 50,
-              stretch: 0,
-              depth: 100,
-              modifier: 1,
-              slideShadows: true,
-            }}
-            pagination={true}
-            navigation={true}
-            modules={[EffectCoverflow, Pagination, Navigation]}
-            className="w-full"
-          >
-            {projects.map((project, index) => (
-              <SwiperSlide key={index} className="w-[300px] sm:w-[400px]">
-                <Link href={project.link}>
-                  <div className="relative h-[250px] sm:h-[300px] rounded-lg overflow-hidden group">
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <div className="text-white text-center p-4">
-                        <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                        <p className="text-sm">{project.description}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-      </section>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+        className="w-full"
+      >
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Featured Projects</h2>
+        <Carousel items={projects.map((project) => <ProjectPreview key={project.title} {...project} />)} />
+      </motion.div>
 
-      {/* Latest Blog Posts */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Latest Blog Posts</h2>
-          <Swiper
-            effect="coverflow"
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView="auto"
-            coverflowEffect={{
-              rotate: 50,
-              stretch: 0,
-              depth: 100,
-              modifier: 1,
-              slideShadows: true,
-            }}
-            pagination={true}
-            navigation={true}
-            modules={[EffectCoverflow, Pagination, Navigation]}
-            className="w-full"
-          >
-            {blogPosts.map((post, index) => (
-              <SwiperSlide key={index} className="w-[300px] sm:w-[400px]">
-                <Link href={post.link}>
-                  <div className="relative h-[250px] sm:h-[300px] rounded-lg overflow-hidden group">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <div className="text-white text-center p-4">
-                        <h3 className="text-xl font-bold mb-2">{post.title}</h3>
-                        <p className="text-sm">{post.excerpt}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-      </section>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+        className="w-full"
+      >
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Latest Blog Posts</h2>
+        <Carousel items={blogPosts.map((post) => <BlogPostPreview key={post.title} {...post} />)} />
+      </motion.div>
     </div>
-  );
+  )
 }
+
